@@ -13,18 +13,17 @@ public class Enemy {
 	public Enemy() {
 		//have enemy move randomly by setting vx, vy to some random 
 		//NON-zero value between -3 and 3
-		vx = (int)(Math.random()*(3+6)-3);
-		vy = (int)(Math.random()*(3+6)-3);
+		
 		while(vx==0) {
-			vx = (int)(Math.random()*(3+6)-3);
+			vx = (int)(Math.random()*(3+3)-3);
 		}
 		while(vy==0) {
-			vy = (int)(Math.random()*(3+6)-3);
+			vy = (int)(Math.random()*(3+3)-3);
 		}
-		
+	
 		//spawn the enemy randomly anywhere on the 800x600 screen
-		x = (int)(Math.random()*800);
-		y = (int)(Math.random()*600);
+		x = (int)(Math.random()*2000)-500;
+		y = (int)(Math.random()*2000)-500;
 		
 		//generate a random color by generating random r, g, b values
 		int red = (int)(Math.random()*256);
@@ -33,23 +32,23 @@ public class Enemy {
 		
 		color = new Color(red, green, blue);
 		//randomize radius
-		rad = (int)(Math.random()*50)-10;
+		rad = (int)(Math.random()*15)+10;
 	}
 	
 	public void paint(Graphics g) {
-		update();
+		
 		g.setColor(color);
-		g.fillOval(x, y, rad, rad);
+		g.fillOval(x, y, rad*2, rad*2);
+		update();
 		
 		//have the enemy object bounce off of the rectangle borders using the helper methods (getters) for 
 		//minx and max x etc
-		x+=vx;
-		y+=vy;
+	
 		if(x >= world.getMaxX() || x<=world.getMinX()) {
 			vx*=-1;
 		}
-		if(x >= world.getMaxY() || x<=world.getMinY()) {
-			vx*=-1;
+		if(y >= world.getMaxY() || y<=world.getMinY()) {
+			vy*=-1;
 		}
 	}
 	
@@ -61,7 +60,66 @@ public class Enemy {
 	
 	//collision code
 	public boolean collide(Enemy en1, Enemy en2) {
-		int dist = en2.rad + en1.rad/3;
 		
+		int dist = en2.rad + en1.rad/3;
+		if(Math.abs(en1.x - en2.x) <=dist || Math.abs(en1.y - en2.y) <=dist) {
+			return true;
+		}
+		return false;
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	public int getx() {
+		return x;
+	}
+	
+	public void setx(int x) {
+		this.x = x;
+	}
+	
+	public int gety() {
+		return y;
+	}
+	
+	public void sety(int y) {
+		this.y = y;
+	}
+	
+	
+	public int getvx() {
+		return vx;
+	}
+	
+	public void setVx(int vx) {
+		this.vx = vx;
+	}
+	
+	public int getvy() {
+		return vy;
+	}
+	
+	public void setVy(int vy) {
+		this.vy = vy;
+	}
+	
+	public int getRad() {
+		return rad;
+	}
+	
+	public void setRad(int rad) {
+		this.rad = rad;
+	}
+
+	
+
+	
+	
+	
+	
 }
