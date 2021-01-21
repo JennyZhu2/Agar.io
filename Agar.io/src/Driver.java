@@ -8,6 +8,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.Font;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -20,6 +21,9 @@ public class Driver extends JPanel implements KeyListener, MouseListener, Action
 	//create Arraylist for enemies
 	ArrayList<Enemy> enemy = new ArrayList<Enemy>();
 	
+	//create player
+	Cell player = new Cell(370,260,25);
+	
 	//arraylist for food
 	ArrayList<Food> food = new ArrayList<Food>();
 	
@@ -29,7 +33,12 @@ public class Driver extends JPanel implements KeyListener, MouseListener, Action
 	Timer t;
 	
 	Rectangle world = new Rectangle(-500,-500,2000,2000);
-	Cell player = new Cell(370,260,25);
+	
+	
+	
+	//game over
+	boolean lose = false;
+	
 	
 	//mouse location
 	int mx;
@@ -50,17 +59,78 @@ public class Driver extends JPanel implements KeyListener, MouseListener, Action
 		
 		g.fillRect(30, 30, 50, 50);
 		
+		//paint objects
+		
 		player.paint(g);
+
+		for(Enemy e: enemy) {
+			e.paint(g);
+		}
+		
+		for(Food f: food) {
+			f.paint(g);
+		}
 		
 		
+			
+		
+	//PLAYER GAME MECHANICS	
 		//player movement
-				if(mouseMoved) {
-					player.setX(mx);
-					player.setY(my);
+		if(mouseMoved) {
+			player.setX(mx);
+			player.setY(my);
 				
-				}
-				repaint();
+		}
+		repaint();
+				
+				
+		//player collision
 		
+		for(int i=0; i<enemy.size(); i++) {
+			int rad1 = (int)player.getRad();
+			int x1 = player.getX() + rad1;
+			int y1 = player.getY() + rad1;
+			int rad2 = (int)enemy.get(i).getRad();
+			int x2 = enemy.get(i).getx() + rad2;
+			int y2 = enemy.get(i).gety() + rad2;
+			
+			double dist = Math.sqrt(Math.pow(x1-x2, 2) + Math.pow(y1-y2, 2));
+			
+			if(dist <= rad1+rad2/3 && rad1>rad2){
+				enemy.get(i).setRad(0);
+				
+				//player increase mass
+				player.setRad(rad1 + rad2/4);
+			}
+			if(dist <= rad1+rad2/3 && rad2>rad1){
+				player.setRad(0);
+				
+				//enemy increase mass
+				enemy.get(i).setRad(rad2 + rad1/4);
+				
+				lose = true;
+			}
+			
+			if(lose) {
+				Graphics2D g2 = (Graphics2D) g;
+				
+				g2.setFont(new Font("VERDANA", Font.BOLD, 100));
+				g2.drawString("GAME OVER", 450, 360);
+			}
+			
+		}
+			
+				
+	//ENEMY GAME MECHANICS	
+		//velocity as enemy grows
+		for(int i=0; i<enemy.size(); i++) {
+			double velX = enemy.get(i).getvx() - (1/10)*enemy.get(i).getRad();
+			enemy.get(i).setVx(velX);
+			double velY = enemy.get(i).getvy() - (1/20)*enemy.get(i).getRad();
+			enemy.get(i).setVy(velY);
+		}
+				
+				
 		//enemy collision
 		for(int i=0; i<enemy.size(); i++) {
 			
@@ -119,27 +189,8 @@ public class Driver extends JPanel implements KeyListener, MouseListener, Action
 			
 		}
 			
-	
-		
-		//call each enemy to paint themselves
-		for(Enemy e: enemy) {
-			e.paint(g);
-		}
-		
-		//call each food to paint themselves
-		for(Food f: food) {
-			f.paint(g);
-		}
 		
 		
-				
-		/*
-		if(mouseMoved) {
-		player.setX(mx);
-		player.setY(my);
-		player.paint(g);
-		}
-		*/
 	}
 	
 	

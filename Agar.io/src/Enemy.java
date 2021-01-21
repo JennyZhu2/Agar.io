@@ -4,7 +4,7 @@ import java.awt.Rectangle;
 
 public class Enemy {
 	private int x, y;
-	private int vx, vy;
+	private double vx, vy;
 	private double rad;
 	private int mass;
 	private Color color;
@@ -14,12 +14,11 @@ public class Enemy {
 		//have enemy move randomly by setting vx, vy to some random 
 		//NON-zero value between -3 and 3
 		
-		while(vx==0) {
-			vx = (int)(Math.random()*(3+3)-3);
+		while(vx==0 || vy==0) {
+			vx = (Math.random()*(2+2)-2);
+			vy = (Math.random()*(2+2)-2);
 		}
-		while(vy==0) {
-			vy = (int)(Math.random()*(3+3)-3);
-		}
+		
 	
 		//spawn the enemy randomly anywhere on the 800x600 screen
 		x = (int)(Math.random()*2000)-500;
@@ -31,8 +30,9 @@ public class Enemy {
 		int blue = (int)(Math.random()*256);
 		
 		color = new Color(red, green, blue);
+		
 		//randomize radius
-		rad = (int)(Math.random()*15)+10;
+		rad = (Math.random()*(2)+5);
 	}
 	
 	public void paint(Graphics g) {
@@ -92,19 +92,19 @@ public class Enemy {
 	}
 	
 	
-	public int getvx() {
+	public double getvx() {
 		return vx;
 	}
 	
-	public void setVx(int vx) {
+	public void setVx(double vx) {
 		this.vx = vx;
 	}
 	
-	public int getvy() {
+	public double getvy() {
 		return vy;
 	}
 	
-	public void setVy(int vy) {
+	public void setVy(double vy) {
 		this.vy = vy;
 	}
 	
@@ -112,8 +112,8 @@ public class Enemy {
 		return rad;
 	}
 	
-	public void setRad(double increase) {
-		this.rad = increase;
+	public void setRad(double rad) {
+		this.rad = rad;
 	}
 
 	
