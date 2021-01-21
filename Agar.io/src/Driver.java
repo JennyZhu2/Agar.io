@@ -29,7 +29,7 @@ public class Driver extends JPanel implements KeyListener, MouseListener, Action
 	Timer t;
 	
 	Rectangle world = new Rectangle(-500,-500,2000,2000);
-	Cell player = new Cell(370,260,20);
+	Cell player = new Cell(370,260,25);
 	
 	//mouse location
 	int mx;
@@ -52,36 +52,43 @@ public class Driver extends JPanel implements KeyListener, MouseListener, Action
 		
 		player.paint(g);
 		
-	
-		//collision
-		/*for(int i=0; i<enemy.size(); i++) {
+		
+		//player movement
+				if(mouseMoved) {
+					player.setX(mx);
+					player.setY(my);
+				
+				}
+				repaint();
+		
+		//enemy collision
+		for(int i=0; i<enemy.size(); i++) {
 			
 			Enemy en = enemy.get(i);
-			Rectangle enArea = new Rectangle(en.getx(), en.gety(), en.getRad()*2, en.getRad()*2);
+			int d1 = (int)en.getRad()*2;
+			Rectangle enArea = new Rectangle((int)en.getx(), (int)en.gety(), d1, d1);
 			
-			if(en.collide())
 			for(int j=0; j<enemy.size(); j++) {
 				Enemy en2 = enemy.get(j);
-				Rectangle en2Area = new Rectangle(en2.getx(), en2.gety(), en2.getRad()*2, en2.getRad()*2);
-				if(enArea.intersects(en2Area)) {
-					en.get(j).setRad(0);
+				int d2 = (int)en2.getRad()*2;
+				Rectangle en2Area = new Rectangle((int)en2.getx(), (int)en2.gety(), d2 , d2);
+				
+				//delete smaller enemy and increase mass
+				if(enArea.intersects(en2Area) && d1>d2) {
+					enemy.get(j).setRad(0);
+					int inc = d1/2 + d2*4/d1;
+					enemy.get(i).setRad(inc);
+				}
+				if(enArea.intersects(en2Area) && d2>d1) {
+					enemy.get(i).setRad(0);
+					int inc = d2/2 + d1*4/d2;
+					enemy.get(j).setRad(inc);
 				}
 			}
 			
 		}
 		
-		
-		for(Enemy e: enemy) {
-			for(int i=0; i<enemy.size(); i++) {
-				if(e.collide(enemy.get(i), enemy.get(i+1))) {
-					if(enemy.get(i).getRad() < enemy.get(i+1).getRad()) {
-						enemy.remove(i);
-					} else {
-						enemy.remove(i+1);
-					}
-				}
-			}
-		}*/
+
 		
 		
 		//food collision
@@ -89,13 +96,24 @@ public class Driver extends JPanel implements KeyListener, MouseListener, Action
 		for(int i=0; i<enemy.size(); i++) {
 			
 			Enemy en = enemy.get(i);
-			Rectangle enArea = new Rectangle(en.getx(), en.gety(), en.getRad()*2, en.getRad()*2);
+			Rectangle enArea = new Rectangle((int)en.getx(), (int)en.gety(), (int)en.getRad()*2, (int)en.getRad()*2);
 			
 			for(int j=0; j<food.size(); j++) {
 				Food fo = food.get(j);
 				Rectangle foArea = new Rectangle(fo.getX(), fo.getY(), fo.getRad()*2, fo.getRad()*2);
 				if(enArea.intersects(foArea)) {
+					//delete food
 					food.get(j).setRad(0);
+					//spawn in food
+					int random = (int)(Math.random()*10);
+					if(random<6) {
+						food.add(new Food());
+					}
+					//increase mass
+					double rad = enemy.get(i).getRad();
+					double increase = 15/rad;
+					enemy.get(i).setRad(increase+rad);
+					
 				}
 			}
 			
@@ -128,7 +146,7 @@ public class Driver extends JPanel implements KeyListener, MouseListener, Action
 	public Driver() {		
 		
 		//add enemies
-		for(int i=0; i<20; i++) {
+		for(int i=0; i<30; i++) {
 			enemy.add(new Enemy());
 		}
 		
@@ -148,6 +166,7 @@ public class Driver extends JPanel implements KeyListener, MouseListener, Action
 		frame.setResizable(true);
 		frame.addKeyListener(this);
 		frame.addMouseListener(this);
+		frame.addMouseMotionListener(this);
 	
 		t = new Timer(17, this);
 		t.start();
@@ -159,14 +178,6 @@ public class Driver extends JPanel implements KeyListener, MouseListener, Action
 		Driver d = new Driver();
 	}
 	
-	 public void checkForCollision(){
-	      
-	      
-	      //for (int i = 0; i < enemy.size(); i++){
-	         //if the distance b/w player and enemy is less than the combined radius
-	         //then they are colliding - eat,  remove, and create new enemy
-
-	}
 	
 	 
 	 
@@ -175,8 +186,10 @@ public class Driver extends JPanel implements KeyListener, MouseListener, Action
 	 @Override
 		public void mouseMoved(MouseEvent e) {
 			// TODO Auto-generated method stub
-		 	mx = e.getX();
-			my = e.getY();
+		 	
+		 
+		 	mx = e.getX()-35;
+			my = e.getY()-35;
 		 
 			
 			mouseMoved =true;

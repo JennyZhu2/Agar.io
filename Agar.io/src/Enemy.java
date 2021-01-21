@@ -5,7 +5,7 @@ import java.awt.Rectangle;
 public class Enemy {
 	private int x, y;
 	private int vx, vy;
-	private int rad;
+	private double rad;
 	private int mass;
 	private Color color;
 	Rectangle world = new Rectangle(-500,-500,2000,2000);
@@ -38,7 +38,7 @@ public class Enemy {
 	public void paint(Graphics g) {
 		
 		g.setColor(color);
-		g.fillOval(x, y, rad*2, rad*2);
+		g.fillOval(x, y, (int)rad*2, (int)rad*2);
 		update();
 		
 		//have the enemy object bounce off of the rectangle borders using the helper methods (getters) for 
@@ -61,7 +61,7 @@ public class Enemy {
 	//collision code
 	public boolean collide(Enemy en1, Enemy en2) {
 		
-		int dist = en2.rad + en1.rad/3;
+		int dist = (int)en2.rad + (int)en1.rad/3;
 		if(Math.abs(en1.x - en2.x) <=dist || Math.abs(en1.y - en2.y) <=dist) {
 			return true;
 		}
@@ -108,12 +108,12 @@ public class Enemy {
 		this.vy = vy;
 	}
 	
-	public int getRad() {
+	public double getRad() {
 		return rad;
 	}
 	
-	public void setRad(int rad) {
-		this.rad = rad;
+	public void setRad(double increase) {
+		this.rad = increase;
 	}
 
 	
