@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.util.ArrayList;
 
 public class Enemy {
 	private int x, y;
@@ -9,6 +10,7 @@ public class Enemy {
 	private int mass;
 	private Color color;
 	Rectangle world = new Rectangle(-500,-500,2000,2000);
+	ArrayList<Enemy> enemy;
 	
 	public Enemy() {
 		//have enemy move randomly by setting vx, vy to some random 
@@ -56,6 +58,11 @@ public class Enemy {
 	public void update() {
 		x+=vx;
 		y+=vy;
+		/*
+		if(Driver.mouseMoved) {
+			x = Driver.mx - x;
+			y = Driver.my - y;
+		}*/
 	}
 	
 	//collision code

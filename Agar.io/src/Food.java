@@ -1,11 +1,14 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.ArrayList;
 
 public class Food {
 
 	private int rad;
 	private int x, y;
+	private int vx, vy;
 	private Color color;
+	public static ArrayList<Food> food;
 	
 	
 	public Food() {
@@ -23,7 +26,13 @@ public class Food {
 			rad = (int)(Math.random()*2+1)+5;
 	}
 	
+	public void update() {
 	
+		/*if(Driver.mouseMoved) {
+			x = Driver.mx -x;
+			y = Driver.my - y;
+		}*/
+	}
 	
 	public int getX() {
 		return x;
@@ -50,10 +59,13 @@ public class Food {
 	}
 	
 
-
+	public static void spawn() {
+		
+	}
 
 	public void paint(Graphics g) {
 		// TODO Auto-generated method stub
+		update();
 		g.setColor(color);
 		g.fillOval(x, y, rad*2, rad*2);
 		

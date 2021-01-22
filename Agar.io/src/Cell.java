@@ -8,6 +8,7 @@ public class Cell {
 	private int mass;
 	private Color color;
 	private boolean isAlive;
+	Cell player;
 	
 	//constructor
 	public Cell(int x, int y, double rad) {
@@ -34,6 +35,8 @@ public class Cell {
 	public void update() {
 		x += vx;
 		y += vy;
+		
+		
 	}
 	
 	
@@ -75,5 +78,13 @@ public class Cell {
 	
 	public void setRad(double rad) {
 		this.rad = rad;
+	}
+	
+	public boolean getIsAlive() {
+		return isAlive;
+	}
+	
+	public void setIsAlive(boolean isAlive) {
+		this.isAlive = isAlive;
 	}
 }

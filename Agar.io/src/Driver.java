@@ -36,14 +36,10 @@ public class Driver extends JPanel implements KeyListener, MouseListener, Action
 	
 	
 	
-	//game over
-	boolean lose = false;
-	
-	
 	//mouse location
-	int mx;
-	int my;
-	boolean mouseMoved;
+	public static int mx;
+	public static int my;
+	public static boolean mouseMoved;
 	
 	
 	
@@ -59,7 +55,7 @@ public class Driver extends JPanel implements KeyListener, MouseListener, Action
 		
 		g.fillRect(30, 30, 50, 50);
 		
-		//paint objects
+	//paint objects
 		
 		player.paint(g);
 
@@ -81,15 +77,18 @@ public class Driver extends JPanel implements KeyListener, MouseListener, Action
 			player.setY(my);
 				
 		}
+		
 		repaint();
 				
 				
 		//player collision
 		
+		int rad1 = (int)player.getRad();
+		int x1 = player.getX() + rad1;
+		int y1 = player.getY() + rad1;
+		
 		for(int i=0; i<enemy.size(); i++) {
-			int rad1 = (int)player.getRad();
-			int x1 = player.getX() + rad1;
-			int y1 = player.getY() + rad1;
+			
 			int rad2 = (int)enemy.get(i).getRad();
 			int x2 = enemy.get(i).getx() + rad2;
 			int y2 = enemy.get(i).gety() + rad2;
@@ -108,10 +107,10 @@ public class Driver extends JPanel implements KeyListener, MouseListener, Action
 				//enemy increase mass
 				enemy.get(i).setRad(rad2 + rad1/4);
 				
-				lose = true;
+				player.setIsAlive(false); 
 			}
 			
-			if(lose) {
+			if(!player.getIsAlive()) {
 				Graphics2D g2 = (Graphics2D) g;
 				
 				g2.setFont(new Font("VERDANA", Font.BOLD, 100));
@@ -119,8 +118,70 @@ public class Driver extends JPanel implements KeyListener, MouseListener, Action
 			}
 			
 		}
+		
+		
+		
+		//food collision 
+		
+		for(int i=0; i<enemy.size(); i++) {
+					
+			int enRad = (int)enemy.get(i).getRad();
+			int enX = enemy.get(i).getx() + enRad;
+			int enY = enemy.get(i).gety() + enRad;
+					
+					
+			for(int j=0; j<food.size(); j++) {
+						
+				int rad2 = (int)food.get(j).getRad();
+				int x2 = food.get(j).getX() + rad2;
+				int y2 = food.get(j).getY() + rad2;
+						
+				double enDist = Math.sqrt(Math.pow(enX-x2, 2) + Math.pow(enY-y2, 2));
+						
+				if( enDist <= rad1+rad2/3) {
+					//delete food
+					food.get(j).setRad(0);
+							
+					//spawn in food
+					int random = (int)(Math.random()*10);
+					if(random<6) {
+						food.add(new Food());
+					}
+						
+					//increase mass
+					double rad = enemy.get(i).getRad();
+					double increase = 15/rad;
+					enemy.get(i).setRad(increase+rad);
+								
+				}
+			}
+					
+		}
+					
+		for(int j=0; j<food.size(); j++) {
 			
+			int rad2 = (int)food.get(j).getRad();
+			int x2 = food.get(j).getX() + rad2;
+			int y2 = food.get(j).getY() + rad2;
+			double dist = Math.sqrt(Math.pow(x1-x2, 2) + Math.pow(y1-y2, 2));
+		
+			if(dist <= rad1+rad2/3 ) {
+				//delete food
+				food.get(j).setRad(0);
+					
+				//spawn in food
+				int random = (int)(Math.random()*10);
+				if(random<6) {
+					food.add(new Food());
+				}
 				
+				//increase mass
+				double rad = player.getRad();
+				double increase = 15/rad;
+				player.setRad(increase+rad);
+						
+		}
+		
 	//ENEMY GAME MECHANICS	
 		//velocity as enemy grows
 		for(int i=0; i<enemy.size(); i++) {
@@ -138,60 +199,26 @@ public class Driver extends JPanel implements KeyListener, MouseListener, Action
 			int d1 = (int)en.getRad()*2;
 			Rectangle enArea = new Rectangle((int)en.getx(), (int)en.gety(), d1, d1);
 			
-			for(int j=0; j<enemy.size(); j++) {
-				Enemy en2 = enemy.get(j);
+			for(int j1=0; j1<enemy.size(); j1++) {
+				Enemy en2 = enemy.get(j1);
 				int d2 = (int)en2.getRad()*2;
 				Rectangle en2Area = new Rectangle((int)en2.getx(), (int)en2.gety(), d2 , d2);
 				
 				//delete smaller enemy and increase mass
 				if(enArea.intersects(en2Area) && d1>d2) {
-					enemy.get(j).setRad(0);
+					enemy.get(j1).setRad(0);
 					int inc = d1/2 + d2*4/d1;
 					enemy.get(i).setRad(inc);
 				}
 				if(enArea.intersects(en2Area) && d2>d1) {
 					enemy.get(i).setRad(0);
 					int inc = d2/2 + d1*4/d2;
-					enemy.get(j).setRad(inc);
+					enemy.get(j1).setRad(inc);
 				}
 			}
 			
 		}
-		
-
-		
-		
-		//food collision
-			
-		for(int i=0; i<enemy.size(); i++) {
-			
-			Enemy en = enemy.get(i);
-			Rectangle enArea = new Rectangle((int)en.getx(), (int)en.gety(), (int)en.getRad()*2, (int)en.getRad()*2);
-			
-			for(int j=0; j<food.size(); j++) {
-				Food fo = food.get(j);
-				Rectangle foArea = new Rectangle(fo.getX(), fo.getY(), fo.getRad()*2, fo.getRad()*2);
-				if(enArea.intersects(foArea)) {
-					//delete food
-					food.get(j).setRad(0);
-					//spawn in food
-					int random = (int)(Math.random()*10);
-					if(random<6) {
-						food.add(new Food());
-					}
-					//increase mass
-					double rad = enemy.get(i).getRad();
-					double increase = 15/rad;
-					enemy.get(i).setRad(increase+rad);
-					
-				}
-			}
-			
-		}
-			
-		
-		
-	}
+	
 	
 	
 	public Driver() {		
